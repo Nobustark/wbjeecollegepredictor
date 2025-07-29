@@ -12,3 +12,13 @@ env/
 # IDE / Editor
 .vscode/
 .idea/
+app.py
+csv_json_.py
+data_cleaner.py
+parser.py
+requirements.txt
+test_api.py
+test_predictor.py
+wbjee_cutoffs_cleaned.csv
+wbjee_cutoffs.csv
+wbjee_data

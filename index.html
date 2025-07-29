@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WBJEE Research Platform by Sk Nabab</title>
+    <style>
+        /* CSS is updated for the new detailed instruction sections */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        
+        :root {
+            --primary-color: #00c6ff; --secondary-color: #0072ff; --background-color: #121212;
+            --surface-color: #1e1e1e; --text-color: #e0e0e0; --text-muted: #888;
+            --card-background: #2a2a2a;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { font-family: 'Poppins', sans-serif; background-color: var(--background-color); color: var(--text-color); line-height: 1.6; }
+        .main-container { max-width: 850px; margin: 0 auto; padding: 2rem; }
+        header { text-align: center; margin-bottom: 2rem; }
+        h1 { font-weight: 700; font-size: 2.8rem; background: linear-gradient(90deg, var(--primary-color), var(--secondary-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { color: var(--text-muted); font-size: 1.1rem; }
+        .content-card { background-color: var(--surface-color); padding: 2.5rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); margin-bottom: 2.5rem; }
+        h2 { font-weight: 600; text-align: center; margin-bottom: 2rem; color: var(--text-color); border-bottom: 2px solid var(--primary-color); display: inline-block; padding-bottom: 0.5rem; }
+        .section-header { text-align: center; margin-bottom: 2.5rem; }
+
+        .app-nav { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; }
+        .nav-btn { background-color: var(--card-background); color: var(--text-muted); border: 1px solid #333; padding: 0.8rem 1.5rem; border-radius: 50px; cursor: pointer; font-weight: 600; font-size: 1rem; transition: all 0.3s ease; }
+        .nav-btn:hover { background-color: #333; color: var(--text-color); }
+        .nav-btn.active { background: linear-gradient(90deg, var(--primary-color), var(--secondary-color)); color: #fff; border-color: transparent; box-shadow: 0 4px 15px rgba(0, 114, 255, 0.3); }
+        .view { display: none; }
+        .active-view { display: block; }
+
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
+        label { margin-bottom: 0.5rem; font-weight: 600; color: var(--text-muted); }
+        input, select { width: 100%; padding: 0.8rem 1rem; background-color: var(--card-background); border: 1px solid #333; border-radius: 8px; color: var(--text-color); font-size: 1rem; transition: all 0.3s ease; }
+        input:focus, select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(0, 198, 255, 0.2); }
+        button { width: 100%; padding: 1rem; font-size: 1.1rem; font-weight: 600; color: #fff; background: linear-gradient(90deg, var(--primary-color), var(--secondary-color)); border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
+        #results, .explorer-results { margin-top: 2rem; }
+        .result-card { background: var(--card-background); border-left: 5px solid var(--primary-color); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; animation: fadeIn 0.5s ease forwards; opacity: 0; }
+        @keyframes fadeIn { to { opacity: 1; } }
+        .result-card h3 { margin-bottom: 0.5rem; } .result-card p { color: var(--text-muted); }
+        .result-card .ranks { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #333; }
+        .rank-info span { font-weight: bold; color: var(--text-color); }
+        .message { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 1.1rem; }
+
+        /* NEW: Styles for enhanced instruction sections */
+        .instructions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+        .step-card { background-color: var(--card-background); padding: 1.5rem; border-radius: 10px; text-align: center; border: 1px solid #333; }
+        .step-icon { width: 50px; height: 50px; margin-bottom: 1rem; color: var(--primary-color); }
+        .step-card h3 { margin-bottom: 0.5rem; font-weight: 600; }
+        .step-card p { font-size: 0.95rem; color: var(--text-muted); }
+        
+        .process-timeline { display: flex; flex-direction: column; gap: 1.5rem; }
+        .process-step { padding-left: 2rem; border-left: 3px solid var(--primary-color); position: relative; }
+        .process-step::before { content: ''; position: absolute; left: -11px; top: 0; width: 20px; height: 20px; background-color: var(--primary-color); border-radius: 50%; border: 3px solid var(--background-color); }
+        .process-step h4 { font-size: 1.2rem; font-weight: 600; color: var(--text-color); }
+        .process-step p { color: var(--text-muted); }
+
+        .disclaimer { font-size: 0.85rem; color: var(--text-muted); text-align: center; margin-top: 2.5rem; padding: 1rem; background-color: rgba(255, 152, 0, 0.1); border-radius: 8px; border-left: 3px solid #ff9800; }
+        
+        footer { text-align: center; padding: 2.5rem; margin-top: 2rem; background-color: var(--surface-color); border-top-left-radius: 20px; border-top-right-radius: 20px; }
+        .about-card { max-width: 500px; margin: 0 auto; }
+        footer a { color: var(--primary-color); text-decoration: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <header>
+            <h1>WBJEE Research Platform</h1>
+            <p class="subtitle">Predict, Explore, and Plan Your Engineering Future</p>
+        </header>
+
+        <main>
+            <!-- Interactive Tools Section -->
+            <section class="content-card">
+                <nav class="app-nav">
+                    <button class="nav-btn active" data-view="predictor-view">Predictor</button>
+                    <button class="nav-btn" data-view="college-explorer-view">College Explorer</button>
+                    <button class="nav-btn" data-view="branch-explorer-view">Branch Explorer</button>
+                </nav>
+
+                <div id="predictor-view" class="view active-view">
+                    <form id="predictor-form">
+                        <!-- ... form fields ... -->
+                        <div class="form-grid">
+                            <div class="form-group"><label for="rank">Your GMR Rank</label><input type="number" id="rank" name="rank" placeholder="e.g., 5000" required></div>
+                            <div class="form-group"><label for="quota">Quota</label><select id="quota" name="quota" required><option value="" disabled selected>Select...</option></select></div>
+                            <div class="form-group"><label for="category">Category</label><select id="category" name="category" required><option value="" disabled selected>Select...</option></select></div>
+                        </div>
+                        <button type="submit">Predict My Options</button>
+                    </form>
+                    <div id="results" class="explorer-results"><p class="message">Enter your details to see potential college options.</p></div>
+                </div>
+
+                <div id="college-explorer-view" class="view">
+                    <!-- ... college explorer fields ... -->
+                    <div class="form-group">
+                        <label for="college-select">Select a College to See All Branch Cutoffs</label>
+                        <select id="college-select"><option value="" disabled selected>Choose a college...</option></select>
+                    </div>
+                    <div id="college-explorer-results" class="explorer-results"><p class="message">Select a college to begin.</p></div>
+                </div>
+
+                <div id="branch-explorer-view" class="view">
+                    <!-- ... branch explorer fields ... -->
+                    <div class="form-group">
+                        <label for="branch-select">Select a Branch to See All College Cutoffs</label>
+                        <select id="branch-select"><option value="" disabled selected>Choose a branch...</option></select>
+                    </div>
+                    <div id="branch-explorer-results" class="explorer-results"><p class="message">Select a branch to begin.</p></div>
+                </div>
+            </section>
+
+            <!-- Detailed Instructions Section -->
+            <section class="content-card">
+                <div class="section-header"><h2>Understanding the Tools</h2></div>
+                <div class="instructions-grid">
+                    <div class="step-card">
+                        <svg class="step-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <h3>Predictor</h3>
+                        <p>The classic tool. Enter your rank and category to see a personalized list of colleges you are likely to get based on previous year's closing ranks.</p>
+                    </div>
+                    <div class="step-card">
+                        <svg class="step-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        <h3>College Explorer</h3>
+                        <p>Want to know everything about a specific college? Select a college name to view all its branches and their respective cutoff ranks for every category.</p>
+                    </div>
+                    <div class="step-card">
+                        <svg class="step-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        <h3>Branch Explorer</h3>
+                        <p>Dreaming of a specific branch like CSE? Select it to see a ranked list of all colleges offering that branch, from most to least competitive.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Admission Process Guide Section -->
+            <section class="content-card">
+                <div class="section-header"><h2>The WBJEE Admission Process</h2></div>
+                <div class="process-timeline">
+                    <div class="process-step">
+                        <h4>Step 1: Exam & Rank Card</h4>
+                        <p>After appearing for the WBJEE exam, you will receive a rank card containing your General Merit Rank (GMR) and Pharmacy Merit Rank (PMR), if applicable.</p>
+                    </div>
+                    <div class="process-step">
+                        <h4>Step 2: Counseling Registration</h4>
+                        <p>Visit the official WBJEEB website to register for e-counseling. This involves filling in personal details and paying the registration fee.</p>
+                    </div>
+                    <div class="process-step">
+                        <h4>Step 3: Choice Filling</h4>
+                        <p>This is the most critical stage. You will create a list of your preferred college and branch combinations in order of priority. <strong>This is where our tool becomes your best friend!</strong> Use the Predictor and Explorer tools to create a smart, informed list of choices.</p>
+                    </div>
+                    <div class="process-step">
+                        <h4>Step 4: Mock Allotment & Choice Locking</h4>
+                        <p>The board releases a "Mock Allotment" based on your initial choices. This gives you an idea of what you might get. You can then modify your list before the deadline and finally lock your choices.</p>
+                    </div>
+                    <div class="process-step">
+                        <h4>Step 5: Allotment Rounds</h4>
+                        <p>The results are released in rounds (Round 1, Round 2, Mop-Up). In each round, you are allotted the highest possible choice from your list based on your rank and seat availability.</p>
+                    </div>
+                     <div class="process-step">
+                        <h4>Step 6: Seat Acceptance & Reporting</h4>
+                        <p>If you are allotted a seat, you must pay the seat acceptance fee online and then report to the designated college with your documents for verification to finalize your admission.</p>
+                    </div>
+                </div>
+                <div class="disclaimer">
+                    <strong>Important Disclaimer:</strong> This platform and its tools are based on historical data and are for informational purposes only. Seat allocation can vary each year. Always refer to the official WBJEEB website for the most accurate and up-to-date information.
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer>
+        <div class="about-card">
+            <h3>About the Creator</h3>
+            <p>Hi, I'm <strong>Sk Nabab</strong>, a pre-final year Chemical Engineering student at Jadavpur University. I built this tool to help WBJEE aspirants navigate the admission process more easily.</p>
+            <a href="mailto:nobustark@gmail.com">nobustark@gmail.com</a>
+        </div>
+    </footer>
+
+    <script src="database.js"></script>
+    <script>
+        // The JavaScript logic is UNCHANGED from the previous version.
+        // It already powers all the interactive elements perfectly.
+        document.addEventListener('DOMContentLoaded', () => {
+            const allCategories = [...new Set(wbjeeData.map(item => item.category))].sort();
+            const allQuotas = [...new Set(wbjeeData.map(item => item.quota))].sort();
+            const allColleges = [...new Set(wbjeeData.map(item => item.institute))].sort();
+            const allBranches = [...new Set(wbjeeData.map(item => item.program))].sort();
+            const validCombinations = wbjeeData.reduce((acc, item) => {
+                if (!acc[item.quota]) acc[item.quota] = new Set();
+                acc[item.quota].add(item.category); return acc;
+            }, {});
+            Object.keys(validCombinations).forEach(key => { validCombinations[key] = [...validCombinations[key]].sort(); });
+            
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const views = document.querySelectorAll('.view');
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    const targetViewId = button.getAttribute('data-view');
+                    views.forEach(view => {
+                        view.style.display = view.id === targetViewId ? 'block' : 'none';
+                    });
+                });
+            });
+
+            const predictorForm = document.getElementById('predictor-form');
+            const rankInput = document.getElementById('rank');
+            const categorySelect = document.getElementById('category');
+            const quotaSelect = document.getElementById('quota');
+            const predictorResultsDiv = document.getElementById('results');
+            allCategories.forEach(cat => categorySelect.add(new Option(cat, cat)));
+            allQuotas.forEach(q => quotaSelect.add(new Option(q, q)));
+            function updateCategoryOptions() {
+                const selectedQuota = quotaSelect.value; const valid = validCombinations[selectedQuota] || [];
+                for (const option of categorySelect.options) {
+                    if (option.value === "") continue;
+                    option.disabled = selectedQuota ? !valid.includes(option.value) : false;
+                }
+                if (categorySelect.options[categorySelect.selectedIndex]?.disabled) { categorySelect.value = ""; }
+            }
+            quotaSelect.addEventListener('change', updateCategoryOptions);
+            predictorForm.addEventListener('submit', (event) => {
+                event.preventDefault(); const rank = parseInt(rankInput.value, 10); const category = categorySelect.value; const quota = quotaSelect.value; if (!rank || !category || !quota) return;
+                const results = wbjeeData.filter(item => item.category === category && item.quota === quota && item.closing_rank >= rank).sort((a, b) => a.closing_rank - b.closing_rank);
+                displayResults(predictorResultsDiv, results);
+            });
+            
+            const collegeSelect = document.getElementById('college-select');
+            const collegeResultsDiv = document.getElementById('college-explorer-results');
+            allColleges.forEach(college => collegeSelect.add(new Option(college, college)));
+            collegeSelect.addEventListener('change', () => {
+                const selectedCollege = collegeSelect.value; if (!selectedCollege) return;
+                const results = wbjeeData.filter(item => item.institute === selectedCollege).sort((a,b) => a.program.localeCompare(b.program) || a.category.localeCompare(b.category));
+                displayResults(collegeResultsDiv, results);
+            });
+
+            const branchSelect = document.getElementById('branch-select');
+            const branchResultsDiv = document.getElementById('branch-explorer-results');
+            allBranches.forEach(branch => branchSelect.add(new Option(branch, branch)));
+            branchSelect.addEventListener('change', () => {
+                const selectedBranch = branchSelect.value; if (!selectedBranch) return;
+                const results = wbjeeData.filter(item => item.program === selectedBranch).sort((a,b) => a.closing_rank - b.closing_rank);
+                displayResults(branchResultsDiv, results);
+            });
+
+            function displayResults(container, data) {
+                if (data.length === 0) { container.innerHTML = `<p class="message">No data found.</p>`; return; }
+                container.innerHTML = `<h2>Found ${data.length} Entries</h2>`;
+                data.forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'result-card'; card.style.animationDelay = `${index * 0.05}s`;
+                    card.innerHTML = `<h3>${item.institute}</h3><p>${item.program}</p><p><strong>Category:</strong> ${item.category} | <strong>Quota:</strong> ${item.quota}</p><div class="ranks"><div class="rank-info">Opening: <span>${item.opening_rank}</span></div><div class="rank-info">Closing: <span>${item.closing_rank}</span></div></div>`;
+                    container.appendChild(card);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
