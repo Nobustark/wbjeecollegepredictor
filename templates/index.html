@@ -1,0 +1,131 @@
+<!-- ================================================================= -->
+<!-- === REPLACE YOUR ENTIRE <script> SECTION WITH THIS BLOCK === -->
+<!-- ================================================================= -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('predictor-form');
+        const rankInput = document.getElementById('rank');
+        const categorySelect = document.getElementById('category');
+        const quotaSelect = document.getElementById('quota');
+        const resultsDiv = document.getElementById('results');
+        const loader = document.getElementById('loader');
+
+        // When deploying on the same server, we don't need a base URL.
+        // API calls will go to the same host that served the HTML file.
+        // e.g., a call to '/options' will go to 'https://your-app.onrender.com/options'
+        const API_BASE_URL = ''; 
+
+        let validCombinations = {};
+
+        async function initializeForm() {
+            try {
+                const [optionsRes, mappingRes] = await Promise.all([
+                    fetch(`${API_BASE_URL}/options`),
+                    fetch(`${API_BASE_URL}/mapping`)
+                ]);
+
+                if (!optionsRes.ok || !mappingRes.ok) {
+                    throw new Error('Failed to fetch initial form data from the server.');
+                }
+
+                const options = await optionsRes.json();
+                validCombinations = await mappingRes.json();
+
+                populateDropdown(categorySelect, options.categories, "Select your category");
+                populateDropdown(quotaSelect, options.quotas, "Select your quota");
+
+            } catch (error) {
+                console.error('Initialization failed:', error);
+                resultsDiv.innerHTML = `<p class="message" style="color: var(--error-color);">Could not initialize the predictor. Is the server running?</p>`;
+            }
+        }
+        
+        function populateDropdown(selectElement, optionsArray, defaultText) {
+            selectElement.innerHTML = `<option value="" disabled selected>${defaultText}</option>`;
+            optionsArray.forEach(opt => {
+                const option = new Option(opt, opt);
+                selectElement.add(option);
+            });
+        }
+
+        function updateCategoryOptions() {
+            const selectedQuota = quotaSelect.value;
+            const currentCategory = categorySelect.value;
+            const validCategories = validCombinations[selectedQuota] || [];
+
+            for (const option of categorySelect.options) {
+                if (option.value === "") continue;
+                if (selectedQuota && !validCategories.includes(option.value)) {
+                    option.disabled = true;
+                    option.style.color = "#555";
+                } else {
+                    option.disabled = false;
+                    option.style.color = "";
+                }
+            }
+            if (currentCategory && categorySelect.options[categorySelect.selectedIndex].disabled) {
+                categorySelect.value = "";
+            }
+        }
+
+        quotaSelect.addEventListener('change', updateCategoryOptions);
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const rank = rankInput.value;
+            const category = categorySelect.value;
+            const quota = quotaSelect.value;
+
+            if (!rank || !category || !quota) {
+                resultsDiv.innerHTML = `<p class="message" style="color: var(--error-color);">Please fill out all fields.</p>`;
+                return;
+            }
+
+            loader.style.display = 'block';
+            resultsDiv.innerHTML = '';
+
+            try {
+                const queryParams = new URLSearchParams({ rank, category, quota });
+                // Since API_BASE_URL is '', this becomes '/predict?...'
+                const response = await fetch(`${API_BASE_URL}/predict?${queryParams}`);
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Prediction request failed.');
+                }
+                const colleges = await response.json();
+                displayResults(colleges);
+            } catch (error) {
+                console.error('Prediction failed:', error);
+                resultsDiv.innerHTML = `<p class="message" style="color: var(--error-color);">An error occurred: ${error.message}</p>`;
+            } finally {
+                loader.style.display = 'none';
+            }
+        });
+
+        function displayResults(colleges) {
+            if (colleges.length === 0) {
+                resultsDiv.innerHTML = `<p class="message">Sorry, no matching colleges found based on last year's data.</p>`;
+                return;
+            }
+            resultsDiv.innerHTML = `<h2>Found ${colleges.length} Potential Options</h2>`;
+            colleges.forEach((college, index) => {
+                const card = document.createElement('div');
+                card.className = 'result-card';
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.innerHTML = `
+                    <h3>${college.institute}</h3>
+                    <p>${college.program}</p>
+                    <p><strong>Round:</strong> ${college.round}</p>
+                    <div class="ranks">
+                        <div class="rank-info">Opening Rank: <span>${college.opening_rank}</span></div>
+                        <div class="rank-info">Closing Rank: <span>${college.closing_rank}</span></div>
+                    </div>
+                `;
+                resultsDiv.appendChild(card);
+            });
+        }
+
+        initializeForm();
+    });
+</script>
